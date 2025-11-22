@@ -9,7 +9,7 @@ name: AI Autofixer
 on: [push]
 
 jobs:
-  logic-check:
+  code-check:
     runs-on: ubuntu-latest
     permissions:
       contents: write
