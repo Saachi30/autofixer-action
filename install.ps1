@@ -9,7 +9,6 @@ if (-not (Test-Path -Path $workflowDir)) {
 }
 
 # 2. Define the YAML content
-# MAKE SURE TO REPLACE 'your-github-username' BELOW
 $yamlContent = @"
 name: AI Logic Fixer
 on: [push]
@@ -31,7 +30,7 @@ jobs:
 
       # RUN YOUR ACTION
       - name: Run AI Scanner
-        uses: your-github-username/autofix-action@main
+        uses: Saachi30/autofixer-action@main
 
       # CREATE PR
       - name: Create Pull Request

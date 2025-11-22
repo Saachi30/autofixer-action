@@ -25,7 +25,7 @@ jobs:
 
       # RUN YOUR ACTION
       - name: Run AI Scanner
-        uses: Saachi30/autofix-action@main
+        uses: Saachi30/autofixer-action@main
 
       # CREATE PR
       - name: Create Pull Request
