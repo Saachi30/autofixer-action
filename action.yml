@@ -1,0 +1,9 @@
+name: 'Code Autofixer'
+description: 'Scans changed files for logic bugs using your centralized AI.'
+runs:
+  using: "composite"
+  steps:
+    - run: pip install requests
+      shell: bash
+    - run: python ${{ github.action_path }}/scanner.py
+      shell: bash
