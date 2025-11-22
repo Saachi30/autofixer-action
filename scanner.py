@@ -6,7 +6,7 @@ import sys
 SERVER_URL = "https://autofixer-backend.vercel.app/analyze-and-fix"
 
 # File types to check
-WATCH_EXT = ('.dart', '.py', '.js', '.jsx', '.ts', '.tsx', '.go', '.rs', '.java', '.cpp')
+WATCH_EXT = ('.dart', '.py', '.js', '.jsx', '.ts', '.tsx', '.go', '.rs', '.java', '.cpp', '.html', '.css')
 
 def get_changed_files():
     print("DEBUG: 1. Starting git operations...")
