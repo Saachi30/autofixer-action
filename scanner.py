@@ -3,61 +3,93 @@ import subprocess
 import requests
 import sys
 
-# PASTE YOUR VERCEL URL HERE
 SERVER_URL = "https://autofixer-backend.vercel.app/analyze-and-fix"
 
-# Extensions to watch
-WATCH_EXT = ('.dart', '.py', '.js', '.ts', '.go', '.rs', '.java', '.cpp')
+# File types to check
+WATCH_EXT = ('.dart', '.py', '.js', '.jsx', '.ts', '.tsx', '.go', '.rs', '.java', '.cpp')
 
 def get_changed_files():
+    print("DEBUG: 1. Starting git operations...")
     try:
-        # Get files changed in the last commit
+        print("DEBUG: 2. Fetching git history...")
+        subprocess.run(["git", "fetch", "--no-tags", "--prune", "--depth=5"], check=False)
+
+       
+        print("DEBUG: 3. Running git diff...")
         cmd = ["git", "diff", "--name-only", "HEAD~1", "HEAD"]
-        return subprocess.check_output(cmd).decode().splitlines()
-    except:
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        
+        raw_output = result.stdout.strip()
+        print(f"DEBUG: 4. Raw git output: '{raw_output}'")
+        
+        if not raw_output:
+            return []
+            
+        return raw_output.splitlines()
+    except Exception as e:
+        print(f"⚠️ Git Error: {e}")
         return []
 
 def main():
     print("🕵️ AI Logic Scanner initialized...")
     
     files = get_changed_files()
+    print(f"📂 Files found in commit: {files}")
+
     if not files:
-        print("No file changes detected.")
+        print("❌ Stopping: No file changes detected.")
+        # Optional: Uncomment below to scan ALL files if diff fails (for testing)
+        # print("⚠️ Falling back to scanning ALL files for test...")
+        # files = [f for f in os.listdir('.') if f.endswith(WATCH_EXT)]
         return
 
     changes_made = False
 
     for file_path in files:
-        if not os.path.exists(file_path): continue
-        if not file_path.endswith(WATCH_EXT): continue
-
-        print(f"🚀 Analyzing {file_path}...")
+        # Check if file exists
+        if not os.path.exists(file_path): 
+            print(f"⏭️ Skipping {file_path} (File deleted or not found)")
+            continue
         
-        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-            code = f.read()
-            
+        # Check extension
+        if not file_path.endswith(WATCH_EXT): 
+            print(f"Skipping {file_path} (Not a supported code file)")
+            continue
+
+        print(f"Sending {file_path} to AI...")
+        
         try:
-            # Send code to your secure backend
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                code = f.read()
+            
             payload = {"code": code, "filename": file_path}
-            resp = requests.post(SERVER_URL, json=payload, timeout=30)
+            resp = requests.post(SERVER_URL, json=payload, timeout=60)
             
             if resp.status_code == 200:
                 result = resp.json().get("result")
+                print(f"✅ AI Response received for {file_path}")
                 
                 if result == "NO_CHANGES_NEEDED":
-                    print(f"✅ {file_path} is clean.")
+                    print(f"AI says: {file_path} is clean.")
                 elif result:
-                    # Only apply if the AI actually changed something
-                    if result.strip() != code.strip():
+                    clean_result = result.strip()
+                    if clean_result != code.strip():
                         with open(file_path, 'w', encoding='utf-8') as f:
-                            f.write(result)
-                        print(f"🐛 Fixed Logic/Runtime error in {file_path}")
+                            f.write(clean_result)
+                        print(f"🐛 FIX APPLIED to {file_path}")
                         changes_made = True
+                    else:
+                        print(f"🤔 AI returned code, but it was identical.")
             else:
-                print(f"⚠️ Server Error: {resp.text}")
+                print(f"❌ Server Error {resp.status_code}: {resp.text}")
 
         except Exception as e:
             print(f"⚠️ Connection Failed: {e}")
+
+    if changes_made:
+        print("✅ Changes successfully written to disk.")
+    else:
+        print("ℹ️ Script finished. No changes made.")
 
 if __name__ == "__main__":
     main()
