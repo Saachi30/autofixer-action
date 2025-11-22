@@ -1,11 +1,11 @@
 #!/bin/bash
 
-echo "Installing AI Logic Fixer..."
+echo "Installing AI Autofixer..."
 
 mkdir -p .github/workflows
 
-cat > .github/workflows/ai-logic-fix.yml <<EOF
-name: AI Logic Fixer
+cat > .github/workflows/ai-autofixer.yml <<EOF
+name: AI Autofixer
 on: [push]
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
           token: \${{ secrets.GITHUB_TOKEN }}
           commit-message: "fix: AI fixed logic errors"
           branch: "autofix/logic-\${{ github.sha }}"
-          title: "🧠 AI Logic Fixes"
+          title: "Autofixed Code"
           body: "I analyzed your code and found potential runtime errors. Here are the fixes."
 EOF
 

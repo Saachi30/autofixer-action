@@ -27,17 +27,17 @@ def get_changed_files():
             
         return raw_output.splitlines()
     except Exception as e:
-        print(f"⚠️ Git Error: {e}")
+        print(f"Git Error: {e}")
         return []
 
 def main():
-    print("🕵️ AI Logic Scanner initialized...")
+    print("AI Autofixer initialized...")
     
     files = get_changed_files()
-    print(f"📂 Files found in commit: {files}")
+    print(f"Files found in commit: {files}")
 
     if not files:
-        print("❌ Stopping: No file changes detected.")
+        print("Stopping: No file changes detected.")
         # Optional: Uncomment below to scan ALL files if diff fails (for testing)
         # print("⚠️ Falling back to scanning ALL files for test...")
         # files = [f for f in os.listdir('.') if f.endswith(WATCH_EXT)]
@@ -48,7 +48,7 @@ def main():
     for file_path in files:
         # Check if file exists
         if not os.path.exists(file_path): 
-            print(f"⏭️ Skipping {file_path} (File deleted or not found)")
+            print(f"Skipping {file_path} (File deleted or not found)")
             continue
         
         # Check extension
@@ -87,9 +87,9 @@ def main():
             print(f"⚠️ Connection Failed: {e}")
 
     if changes_made:
-        print("✅ Changes successfully written to disk.")
+        print("Changes successfully written to disk.")
     else:
-        print("ℹ️ Script finished. No changes made.")
+        print("Script finished. No changes made.")
 
 if __name__ == "__main__":
     main()
