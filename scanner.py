@@ -4,7 +4,7 @@ import requests
 import sys
 
 # PASTE YOUR VERCEL URL HERE
-SERVER_URL = "https://YOUR_VERCEL_URL.vercel.app/analyze-and-fix"
+SERVER_URL = "https://autofixer-backend.vercel.app/analyze-and-fix"
 
 # Extensions to watch
 WATCH_EXT = ('.dart', '.py', '.js', '.ts', '.go', '.rs', '.java', '.cpp')
